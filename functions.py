@@ -6,6 +6,18 @@ from astropy.coordinates import SkyCoord
 from sklearn.cluster import KMeans
 from mw_plot import MWSkyMap
 def function_task1():
+    """
+    Creates and displays a skymap of the milky way
+
+    This map is generated from the CDS/Mellinger survey, which is transformed and displayed using matplotlib
+
+    Returns
+    ----------------
+    fig: Matplotlib.figure.Figure
+        Being the Matplotlib figure of the galaxy
+    ax: matplotlib.axes.Axes
+        Being the axes the map is drawn on
+    """
     mw = MWSkyMap(
         center =(0,0) * u.deg,
         radius = (180,90) *u.deg,
@@ -19,6 +31,30 @@ def function_task1():
     return fig,ax
 
 def function_task2():
+    """
+    Creates and displays a skymap of several galaxies
+
+    This map is generated from the CDS/Mellinger survey, which is transformed and displayed using matplotlib
+
+    Returns
+    ----------------
+    fig1: Matplotlib.figure.Figure
+        Being the Matplotlib figure of the galaxy M31
+    ax1: matplotlib.axes.Axes
+        Being the axes the map of M31 is drawn on
+    fig2: Matplotlib.figure.Figure
+        Being the Matplotlib figure of the galaxy Centaurus A
+    ax2: matplotlib.axes.Axes
+        Being the axes the map of Centaurus A is drawn on
+    fig3: Matplotlib.figure.Figure
+        Being the Matplotlib figure of the galaxy M33
+    ax3: matplotlib.axes.Axes
+        Being the axes the map of M33 is drawn on
+    fig4: Matplotlib.figure.Figure
+        Being the Matplotlib figure of the Large Magenallic Cloud
+    ax4: matplotlib.axes.Axes
+        Being the axes the map of the Large Magenallic Cloud is drawn on
+    """
     #Andromeda Galaxy (M31)
 
     g1 = MWSkyMap(
@@ -64,6 +100,22 @@ def function_task2():
     return(fig1 , ax1, fig2, ax2, fig3, ax3, fig4, ax4)
 
 def figure_to_rgb_array(fig):
+    """
+    Converts a Matplotlib figure into a normalized RGB numpy array
+
+    Removes padding and normalizes matplotlib figure into an array of RGB numbers normalized between [0,1]
+
+    Parameters
+    ----------------
+    fig: Matplotlib.figure.Figure
+        Being the Matplotlib figure of the galaxy one wishes to normalize
+
+    Returns
+    ----------------
+    rgb/255: numpy.ndarray
+    An array of arrays containing the normalized rgb values of the matplotlib figure
+    """
+    
     
     #Remove the extra fat
     fig.subplots_adjust(left = 0, right = 1, top = 1, bottom = 0)
@@ -85,6 +137,23 @@ def figure_to_rgb_array(fig):
 
 
 def generate_color_categories(img_array):
+    """
+    Generates a map based on the color classification of each pixel
+
+    This function takes in an array of arrays of normalized color pixels, uses their colourcode to classify them into one of 5 categories. THe categories are star, red nebula,
+    Blue nebula, Dust and background.
+
+    Parameters
+    -------------
+    rgb/255: numpy.ndarray
+        An array of arrays containing the normalized rgb values of the matplotlib figure
+
+    returns
+    -------------
+    Category[mask]: An array of arrays categorizing each pixel
+    Returns an array of arrays with each pixel categorized into the correct category
+
+    """
     img = img_array.copy()
     h, w, _ = img.shape
 
