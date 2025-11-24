@@ -1,4 +1,3 @@
-
 import numpy as np
 import matplotlib.pyplot as plt
 from astropy import units as u
@@ -9,7 +8,8 @@ def function_task1():
     """
     Creates and displays a skymap of the milky way
 
-    This map is generated from the CDS/Mellinger survey, which is transformed and displayed using matplotlib
+    This map is generated from the CDS/Mellinger survey,
+    which is transformed and displayed using matplotlib
 
     Returns
     ----------------
@@ -34,7 +34,8 @@ def function_task2():
     """
     Creates and displays a skymap of several galaxies
 
-    This map is generated from the CDS/Mellinger survey, which is transformed and displayed using matplotlib
+    This map is generated from the CDS/Mellinger survey
+    which is transformed and displayed using matplotlib
 
     Returns
     ----------------
@@ -103,7 +104,8 @@ def figure_to_rgb_array(fig):
     """
     Converts a Matplotlib figure into a normalized RGB numpy array
 
-    Removes padding and normalizes matplotlib figure into an array of RGB numbers normalized between [0,1]
+    Removes padding and normalizes matplotlib figure into an array of RGB numbers,
+    normalized between [0,1]
 
     Parameters
     ----------------
@@ -112,11 +114,9 @@ def figure_to_rgb_array(fig):
 
     Returns
     ----------------
-    rgb/255: numpy.ndarray
+    img_array: numpy.ndarray
     An array of arrays containing the normalized rgb values of the matplotlib figure
     """
-    
-    
     #Remove the extra fat
     fig.subplots_adjust(left = 0, right = 1, top = 1, bottom = 0)
     fig.canvas.draw()
@@ -140,17 +140,18 @@ def generate_color_categories(img_array):
     """
     Generates a map based on the color classification of each pixel
 
-    This function takes in an array of arrays of normalized color pixels, uses their colourcode to classify them into one of 5 categories. THe categories are star, red nebula,
-    Blue nebula, Dust and background.
+    This function takes in an array of arrays of normalized color pixels,
+    uses their colourcode to classify them into one of 5 categories.
+    The categories are star, red nebula, Blue nebula, Dust and background.
 
     Parameters
     -------------
-    rgb/255: numpy.ndarray
+    img_array: numpy.ndarray
         An array of arrays containing the normalized rgb values of the matplotlib figure
 
     returns
     -------------
-    Category[mask]: An array of arrays categorizing each pixel
+    Category_map: An array of arrays categorizing each pixel
     Returns an array of arrays with each pixel categorized into the correct category
 
     """
@@ -163,8 +164,7 @@ def generate_color_categories(img_array):
         2:{"name":"Blue Nebula","rgb_range": [(0.0, 0.5), (0.5, 1.0), (0.7, 1.0)]},
         3:{"name":"Dust / Dark lanes","rgb_range": [(0.0, 0.3), (0.0, 0.2), (0.0, 0.2)]},
         4:{"name":"Background","rgb_range": [(0.0, 0.08), (0.0, 0.08), (0.0, 0.08)]},
-        
-    }
+        }
 
     category_map = np.full((h, w),-1)
 
@@ -176,16 +176,39 @@ def generate_color_categories(img_array):
         mask = (
             (img[:,:,0] >= r_min) & (img[:,:,0] <= r_max) &
             (img[:,:,1] >= g_min) & (img[:,:,1] <= g_max) &
-            (img[:,:,2] >= b_min) & (img[:,:,2] <= b_max) 
+            (img[:,:,2] >= b_min) & (img[:,:,2] <= b_max)
         )
         category_map[mask] = cat_id
 
     return category_map
 
-
 def cluster_KMeans_pixels (img_array, category_map, n_clusters=5):
+    """
+    Clusters any remaining unassigned pixels, and classifies them according to the given input
+
+    Parameters
+    -------------
+    Category_map: An array of arrays categorizing each pixel
+        An array of arrays with each pixel categorized into a category
+    img_array: numpy.ndarray
+        An array of arrays containing the normalized rgb values of the matplotlib figure
+    n_clusters: integer
+        Tells the function what category the unknown pixels should be categorized into
+
+    returns
+    -------------
+    Clustered_map: np.ndarray
+        An array of arrays where pixels generally keep their category,
+        but pixels which couldnt get a proper designation earlier,
+        receive a designation based on n_clusters input
+    cluster_centers_: Array of arrays or none
+        Array of unassigned RGB pixel array, or none,
+        if all pixels were correctly classified earlier
+
+
+    """
     img = img_array.copy()
-    unassigned_mask = (category_map == -1 )
+    unassigned_mask = category_map == -1
     clustered_map = category_map.copy()
 
     if np.any(unassigned_mask):
@@ -198,12 +221,31 @@ def cluster_KMeans_pixels (img_array, category_map, n_clusters=5):
     else:
         return category_map, None
     
-
 def plot_clusters_overlay(img_array, cluster_map, cluster_centers=None, step=2, alpha=0.8):
+    """
+    A function which plots the map with clusters of a given category
+
+    Plots clusters by overlaying coloured points over a base galaxy image, 
+    based on the classifications given in cluster_KMeans_Pixels
+
+    Parameters
+    ------------
+    img_array: numpy.ndarray
+        An array of arrays containing the normalized rgb values of the matplotlib figure
+    Clustered_map: np.ndarray
+        An array of arrays where pixels generally keep their category, but pixels which couldnt
+        get a proper designation earlier, receive a designation based on n_clusters input
+    cluster_centers_: Array of arrays or none
+        Array of unassigned RGB pixel array, or none, 
+        if all pixels were correctly classified earlier
+    Step: integers
+        Sampling steps for the overlay
+    alpha: float
+        Designates how transparent the final plot should be
+    """
     h, w, _ = img_array.shape 
     unique_clusters = np.unique(cluster_map)
     k = len(unique_clusters)
-
     #Map cluster IDs to indices 
     cluster_id_to_idx = {cid: i for i, cid in enumerate (unique_clusters)}
 

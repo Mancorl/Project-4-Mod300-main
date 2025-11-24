@@ -71,15 +71,12 @@ def plot_data_and_cumulative(days, new_cases, cumulative, country_name: str):
 
     plt.show()
 
-
-
 def fit_linear_regression(days , target):
     X = np.asarray(days).reshape(-1, 1)
     y = np.asarray(target)
     model = LinearRegression()
     model.fit(X, y)
     return model
-
 
 def plot_linear_regression(days,  target, model, country_name, ylabel):
     X = np.asarray(days).reshape(-1, 1)
@@ -93,7 +90,6 @@ def plot_linear_regression(days,  target, model, country_name, ylabel):
     plt.legend()
     plt.show()
 
-
 def fit_polynomial_regression(days , target, degree=4):
     X = np.asarray(days ).reshape(-1, 1)
     y = np.asarray(target)
@@ -102,7 +98,6 @@ def fit_polynomial_regression(days , target, degree=4):
     model = LinearRegression()
     model.fit(X_poly, y)
     return model, poly
-
 
 def plot_polynomial_regression(days,  target, model, poly, country_name, ylabel):
     days = np.asarray(days)
@@ -132,7 +127,6 @@ def fit_mlp_regressor(days, target, hidden_layers=(20, 20), max_iter=2000):
     mlp.fit(X, y)
     return mlp
 
-
 def plot_mlp_regression(days,  target, mlp, country_name, ylabel):
     X = np.asarray(days).reshape(-1, 1)
     y_pred = mlp.predict(X)
@@ -145,7 +139,6 @@ def plot_mlp_regression(days,  target, mlp, country_name, ylabel):
     plt.legend()
     plt.show()
 
-
 def build_sequences(series, window=10):
     data = np.asarray(series, dtype=float)
     X_list = []
@@ -157,7 +150,6 @@ def build_sequences(series, window=10):
     y = np.array(y_list)
     X = X.reshape((X.shape[0], X.shape[1], 1))
     return X, y
-
 
 def fit_lstm(series, window=10, epochs=10, verbose=0):
     if Sequential is None or LSTM is None:
@@ -175,7 +167,6 @@ def fit_lstm(series, window=10, epochs=10, verbose=0):
     model.fit(X, y, epochs=epochs, verbose=verbose)
     y_pred = model.predict(X).flatten()
     return model, X, y, y_pred
-
 
 def plot_lstm_results(y, y_pred, country_name):
     plt.plot(y, label="Actual")
