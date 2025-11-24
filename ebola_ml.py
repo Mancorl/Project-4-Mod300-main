@@ -8,7 +8,9 @@ from sklearn.neural_network import MLPRegressor
 
 try:
     import tensorflow as tf
-except Exception: 
+    from tensorflow.keras.models import Sequential
+    from tensorflow.keras.layers import LSTM, Dense
+except Exception:
     tf = None
     Sequential = None
     LSTM = None
